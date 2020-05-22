@@ -14,7 +14,6 @@ const FilterBar = ({ cases }) => {
     const [province, setProvince] = useRecoilState(provinceState);
 
     useEffect(() => {
-        console.log('should not be called anymore');
         if (Boolean(cases.length)) {
             const allDates = Object.keys(cases[0])
                 .filter(key => !isNaN(Date.parse(key)));
@@ -50,7 +49,6 @@ const FilterBar = ({ cases }) => {
                 .map(place => place['Country/Region'])
         )
     );
-    console.log(dateRange);
     return (
         <div>
             <button onClick={clearFilters}>Clear filters</button>

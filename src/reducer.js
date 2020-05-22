@@ -1,4 +1,10 @@
+import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import { atom, selector } from 'recoil';
+
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore)
 
 // data sets
 export const caseState = atom({
@@ -64,6 +70,27 @@ const filteredStates = selector({
                 return dataset.filter(place => place['Province/State'] === province)
             })
         }
+        // just always filter by date - laziness here
+        datasets = datasets.map((dataset) => {
+            return dataset.map((place) => {
+                const validKeys = Object.keys(place)
+                    .filter((key) => {
+                        // if parsing a date object entry, see if it fits our range
+                        if (!isNaN(Date.parse(key)) && dayjs(key).isSameOrAfter(date.start) && dayjs(key).isSameOrBefore(date.end)) {
+                            return true;
+                        } else if (!isNaN(Date.parse(key))) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    });
+                return validKeys.reduce((acc, key) => {
+                    acc[key] = place[key];
+                    return acc;
+                }, {})
+            })
+        })
+
         return {
             cases: datasets[0],
             deaths: datasets[1],
@@ -94,7 +121,6 @@ export const casesAndRecoveredValue = selector({
     key: 'casesPerDay',
     get: ({ get }) => {
         const { cases, recovered } = get(filteredStates);
-        console.log(cases);
         const casesByDate = composeCountByDate(cases);
         const recoveredByDate = composeCountByDate(recovered);
         return Object.entries(casesByDate).map(([key, value]) => {

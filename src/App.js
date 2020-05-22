@@ -49,12 +49,10 @@ function App() {
       setRecoveredData(recoveredData.data); 
     }
     fetchAll().then(() => {
-      console.log('now done?');
       setLoading(false)
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  console.log(cases);
   return (
     <div>
       <h1>Covid 19 site</h1>
