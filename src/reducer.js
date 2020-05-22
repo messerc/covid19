@@ -45,41 +45,14 @@ export const provinceState = atom({
 const filterByCountry = (dataset, country) => dataset.filter(place => place['Country/Region'] === country);
 const filterByProvince = (dataset, province) => dataset.filter(place => place['Province/State'] === province);
 
-const filterByDate = (dataset, dates) => {
-        const dateRange = new Set();
-        for (let date = dayjs(dates.start); date < dayjs(dates.end); date = dayjs(date).add(1, 'day')) {
-            dateRange.add(dayjs(date).format('M/D/YY'));
-        }
-        return dataset.map((place) => {
-            const validKeys = Object.keys(place)
-                .filter((key) => {
-
-                    // if parsing a date object entry, see if it fits our range
-                    if (!isNaN(Date.parse(key)) && dayjs(key).isSameOrAfter(dates.start) && dayjs(key).isSameOrBefore(dates.end)) {
-                        return true;
-                    } else if (!isNaN(Date.parse(key))) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                });
-            return validKeys.reduce((acc, key) => {
-                acc[key] = place[key];
-                return acc;
-            }, {})
-        })
-    }
-
-
-const filteredStates = selector({
-    key: 'filteredStates',
+const filteredGeoState = selector({
+    key: 'filteredGeoState',
     get: ({ get }) => {
 
-        // filters
-        const [country, province, dates] = [
+        // geo filters
+        const [country, province] = [
             get(countryState),
             get(provinceState),
-            get(dateState),
         ];
 
         // data sets
@@ -96,9 +69,6 @@ const filteredStates = selector({
         if (province) {
             datasets = datasets.map(dataset => filterByProvince(dataset, province));
         }
-
-        // just always filter by dates - laziness here and this is slow
-        // datasets = datasets.map(dataset => filterByDate(dataset, dates));
 
         return {
             filteredCases: datasets[0],
@@ -133,7 +103,7 @@ const composeCountByDate = (data, dates) => {
 export const casesAndRecoveredValue = selector({
     key: 'casesPerDay',
     get: ({ get }) => {
-        const { filteredCases, filteredRecovered } = get(filteredStates);
+        const { filteredCases, filteredRecovered } = get(filteredGeoState);
         const dates = get(dateState);
         const casesByDate = composeCountByDate(filteredCases, dates);
         const recoveredByDate = composeCountByDate(filteredRecovered, dates);
@@ -150,7 +120,7 @@ export const casesAndRecoveredValue = selector({
 export const deathsValue = selector({
     key: 'deathsPerDay',
     get: ({ get }) => {
-        const { filteredDeaths } = get(filteredStates);
+        const { filteredDeaths } = get(filteredGeoState);
         const dates = get(dateState);
         const deathsByDate = composeCountByDate(filteredDeaths, dates);
         return Object.entries(deathsByDate).map(([key, value]) => {
