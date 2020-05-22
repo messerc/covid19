@@ -32,7 +32,7 @@ const FilterBar = ({ cases }) => {
     const clearFilters = () => {
         setCountry('');
         setProvince('');
-        setDateRange({ start: null, end: null });
+        setDateRange({ start: min, end: max });
     }
 
     const provinces = cases

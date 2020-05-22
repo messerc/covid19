@@ -70,7 +70,7 @@ const filteredStates = selector({
                 return dataset.filter(place => place['Province/State'] === province)
             })
         }
-        // just always filter by date - laziness here
+        // just always filter by date - laziness here and this is slow
         datasets = datasets.map((dataset) => {
             return dataset.map((place) => {
                 const validKeys = Object.keys(place)
