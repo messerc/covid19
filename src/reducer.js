@@ -42,13 +42,35 @@ export const provinceState = atom({
     default: null
 });
 
+const filterByCountry = (dataset, country) => dataset.filter(place => place['Country/Region'] === country);
+const filterByProvince = (dataset, province) => dataset.filter(place => place['Province/State'] === province);
+const filterByDate = (dataset, dates) => {
+        return dataset.map((place) => {
+            const validKeys = Object.keys(place)
+                .filter((key) => {
+                    // if parsing a date object entry, see if it fits our range
+                    if (!isNaN(Date.parse(key)) && dayjs(key).isSameOrAfter(dates.start) && dayjs(key).isSameOrBefore(dates.end)) {
+                        return true;
+                    } else if (!isNaN(Date.parse(key))) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                });
+            return validKeys.reduce((acc, key) => {
+                acc[key] = place[key];
+                return acc;
+            }, {})
+        })
+    }
+
 
 const filteredStates = selector({
     key: 'filteredStates',
     get: ({ get }) => {
 
         // filters
-        const [country, province, date] = [
+        const [country, province, dates] = [
             get(countryState),
             get(provinceState),
             get(dateState),
@@ -60,41 +82,22 @@ const filteredStates = selector({
             get(deathState),
             get(recoveredState),
         ];
+
         if (country) {
-            datasets = datasets.map(dataset => {
-                return dataset.filter(place => place['Country/Region'] === country)
-            })
+            datasets = datasets.map(dataset => filterByCountry(dataset, country));
         }
+
         if (province) {
-            datasets = datasets.map(dataset => {
-                return dataset.filter(place => place['Province/State'] === province)
-            })
+            datasets = datasets.map(dataset => filterByProvince(dataset, province));
         }
-        // just always filter by date - laziness here and this is slow
-        datasets = datasets.map((dataset) => {
-            return dataset.map((place) => {
-                const validKeys = Object.keys(place)
-                    .filter((key) => {
-                        // if parsing a date object entry, see if it fits our range
-                        if (!isNaN(Date.parse(key)) && dayjs(key).isSameOrAfter(date.start) && dayjs(key).isSameOrBefore(date.end)) {
-                            return true;
-                        } else if (!isNaN(Date.parse(key))) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    });
-                return validKeys.reduce((acc, key) => {
-                    acc[key] = place[key];
-                    return acc;
-                }, {})
-            })
-        })
+
+        // just always filter by dates - laziness here and this is slow
+        datasets = datasets.map(dataset => filterByDate(dataset, dates));
 
         return {
-            cases: datasets[0],
-            deaths: datasets[1],
-            recovered: datasets[2],
+            filteredCases: datasets[0],
+            filteredDeaths: datasets[1],
+            filteredRecovered: datasets[2],
         }
     }
 })
@@ -107,7 +110,7 @@ const composeCountByDate = (data) => {
             if (!isNaN(Date.parse(key))) {
                 // add to the number or initialize it
                 if (countsByDate[key]) {
-                    countsByDate[key] = Number(countsByDate[key]) + Number(value);
+                    countsByDate[key] += Number(value);
                 } else {
                     countsByDate[key] = Number(value);
                 }
@@ -120,9 +123,9 @@ const composeCountByDate = (data) => {
 export const casesAndRecoveredValue = selector({
     key: 'casesPerDay',
     get: ({ get }) => {
-        const { cases, recovered } = get(filteredStates);
-        const casesByDate = composeCountByDate(cases);
-        const recoveredByDate = composeCountByDate(recovered);
+        const { filteredCases, filteredRecovered } = get(filteredStates);
+        const casesByDate = composeCountByDate(filteredCases);
+        const recoveredByDate = composeCountByDate(filteredRecovered);
         return Object.entries(casesByDate).map(([key, value]) => {
             return {
                 date: key,
@@ -136,13 +139,41 @@ export const casesAndRecoveredValue = selector({
 export const deathsValue = selector({
     key: 'deathsPerDay',
     get: ({ get }) => {
-        const { deaths } = get(filteredStates);
-        const deathsByDate = composeCountByDate(deaths);
+        const { filteredDeaths } = get(filteredStates);
+        const deathsByDate = composeCountByDate(filteredDeaths);
         return Object.entries(deathsByDate).map(([key, value]) => {
             return {
                 date: key,
                 deaths: value,
             };
         });
+    }
+});
+
+const composeCountByCountry = (data, date) => {
+    const countsByCountry = {};
+    data.forEach(place => {
+        const country = place['Country/Region'];
+        if (countsByCountry[country]) {
+            // if the country exists already, add from supplied date
+            countsByCountry[country] += Number(place[dayjs(date).format('M/D/YY')]);
+        } else {
+            countsByCountry[country] = Number(place[dayjs(date).format('M/D/YY')]);
+        }
+    });
+    return countsByCountry;
+}
+
+
+export const topCasesByCountry = selector({
+    key: 'topCasesByCountry',
+    get: ({ get }) => {
+        const cases = get(caseState)
+        const { end: date } = get(dateState);
+        const casesByCountry = composeCountByCountry(cases, date);
+        return Object.entries(casesByCountry)
+            .sort((a, b) => a[1] < b[1] ? 1 : -1)
+            .map(([ key, value ]) => ({ label: key, value }))
+            .slice(0, 6);
     }
 });

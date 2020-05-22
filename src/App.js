@@ -49,6 +49,7 @@ function App() {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
     <div>
       <h1>Covid 19 site</h1>
@@ -56,9 +57,9 @@ function App() {
       {!loading && (
         <Fragment>
           <FilterBar cases={cases} />
+          <ReportedCasesByCountry />
           <CasesPerDayContainer />
           <DeathsPerDayContainer />
-          <ReportedCasesByCountry data={{}} /> 
         </Fragment>
       )}
     </div>
