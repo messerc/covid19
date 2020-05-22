@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { atom, useRecoilState, useRecoilValue } from 'recoil';
+import React, { useEffect } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import dayjs from 'dayjs';
 import Papa from 'papaparse';
 import FilterBar from './FilterBar';
@@ -11,7 +11,8 @@ import {
   caseState,
   deathState,
   recoveredState,
-  casesAndRecoveredState,
+  casesAndRecoveredValue,
+  deathsValue,
 } from './reducer';
 
 function App() {
@@ -20,7 +21,8 @@ function App() {
   const [deaths, setDeathsData] = useRecoilState(deathState);
   const [recovered, setRecoveredData] = useRecoilState(recoveredState);
 
-  const casesAndRecoveredData = useRecoilValue(casesAndRecoveredState);
+  const casesAndRecoveredData = useRecoilValue(casesAndRecoveredValue);
+  const deathsData = useRecoilValue(deathsValue);
 
   const fetchAndParse = (url) => {
     return new Promise((resolve, reject) => {
@@ -49,7 +51,7 @@ function App() {
   return (
     <div>
       <h1>Covid 19 site</h1>
-      <FilterBar />
+      <FilterBar cases={cases} />
       <LineChart
         title="Cases per day"
         data={casesAndRecoveredData}
@@ -64,8 +66,16 @@ function App() {
           },
         ]}
       />
-      
-      <LineChart />
+       <LineChart
+        title="Deaths"
+        data={deathsData}
+        fields={[
+          {
+            name: 'deaths',
+            color: 'red',
+          },
+        ]}
+      />     
       <ReportedCasesByCountry data={{}} /> 
     </div>
   );
