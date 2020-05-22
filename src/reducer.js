@@ -1,5 +1,6 @@
 import { atom, selector } from 'recoil';
 
+// data sets
 export const caseState = atom({
     key: 'cases',
     default: [],
@@ -14,6 +15,8 @@ export const recoveredState = atom({
     key: 'recovered',
     default: [],
 });
+
+// filters
 
 export const dateState = atom({
     key: 'date',
@@ -32,6 +35,7 @@ export const provinceState = atom({
     key: 'province',
     default: null
 });
+
 
 const filteredStates = selector({
     key: 'filteredStates',

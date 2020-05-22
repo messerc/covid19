@@ -1,11 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import dayjs from 'dayjs';
 import Papa from 'papaparse';
 import FilterBar from './FilterBar';
 import LineChart from './LineChart';
 import ReportedCasesByCountry from './ReportedCasesByCountry';
-
 import { casesURL, deathsURL, recoveredURL } from './constants';
 import {
   caseState,
@@ -17,8 +15,11 @@ import {
 
 function App() {
 
+  const [loading, setLoading] = useState(false);
   const [cases, setCaseData] = useRecoilState(caseState);
+  // eslint-disable-next-line no-unused-vars
   const [deaths, setDeathsData] = useRecoilState(deathState);
+  // eslint-disable-next-line no-unused-vars
   const [recovered, setRecoveredData] = useRecoilState(recoveredState);
 
   const casesAndRecoveredData = useRecoilValue(casesAndRecoveredValue);
@@ -36,47 +37,58 @@ function App() {
   }
 
   useEffect(() => {
-    // console.log(dayjs('1/22/20').isBefore('1/23/20'));
-    fetchAndParse(casesURL).then(results => {
-      setCaseData(results.data);
-    })
-    fetchAndParse(deathsURL).then(results => {
-      setDeathsData(results.data);
-    })
-    fetchAndParse(recoveredURL).then(results => {
-      setRecoveredData(results.data);
-    })
+    setLoading(true);
+    const fetchAll = async () => {
+      const [casesData, deathsData, recoveredData] = [
+        await fetchAndParse(casesURL),
+        await fetchAndParse(deathsURL),
+        await fetchAndParse(recoveredURL),
+      ];
+      setCaseData(casesData.data);
+      setDeathsData(deathsData.data);
+      setRecoveredData(recoveredData.data); 
+    }
+    fetchAll().then(() => {
+      console.log('now done?');
+      setLoading(false)
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+  console.log(cases);
   return (
     <div>
       <h1>Covid 19 site</h1>
-      <FilterBar cases={cases} />
-      <LineChart
-        title="Cases per day"
-        data={casesAndRecoveredData}
-        fields={[
-          {
-            name: 'reported',
-            color: 'red',
-          },
-          {
-            name: 'recovered',
-            color: 'green',
-          },
-        ]}
-      />
-       <LineChart
-        title="Deaths"
-        data={deathsData}
-        fields={[
-          {
-            name: 'deaths',
-            color: 'red',
-          },
-        ]}
-      />     
-      <ReportedCasesByCountry data={{}} /> 
+      {loading && <div>Loading...</div>}
+      {!loading && (
+        <Fragment>
+          <FilterBar cases={cases} />
+          <LineChart
+            title="Cases per day"
+            data={casesAndRecoveredData}
+            fields={[
+              {
+                name: 'reported',
+                color: 'red',
+              },
+              {
+                name: 'recovered',
+                color: 'green',
+              },
+            ]}
+          />
+          <LineChart
+            title="Deaths"
+            data={deathsData}
+            fields={[
+              {
+                name: 'deaths',
+                color: 'red',
+              },
+            ]}
+          />     
+          <ReportedCasesByCountry data={{}} /> 
+        </Fragment>
+      )}
     </div>
   );
 }
