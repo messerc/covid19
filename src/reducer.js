@@ -44,10 +44,16 @@ export const provinceState = atom({
 
 const filterByCountry = (dataset, country) => dataset.filter(place => place['Country/Region'] === country);
 const filterByProvince = (dataset, province) => dataset.filter(place => place['Province/State'] === province);
+
 const filterByDate = (dataset, dates) => {
+        const dateRange = new Set();
+        for (let date = dayjs(dates.start); date < dayjs(dates.end); date = dayjs(date).add(1, 'day')) {
+            dateRange.add(dayjs(date).format('M/D/YY'));
+        }
         return dataset.map((place) => {
             const validKeys = Object.keys(place)
                 .filter((key) => {
+
                     // if parsing a date object entry, see if it fits our range
                     if (!isNaN(Date.parse(key)) && dayjs(key).isSameOrAfter(dates.start) && dayjs(key).isSameOrBefore(dates.end)) {
                         return true;
@@ -92,7 +98,7 @@ const filteredStates = selector({
         }
 
         // just always filter by dates - laziness here and this is slow
-        datasets = datasets.map(dataset => filterByDate(dataset, dates));
+        // datasets = datasets.map(dataset => filterByDate(dataset, dates));
 
         return {
             filteredCases: datasets[0],
@@ -102,12 +108,16 @@ const filteredStates = selector({
     }
 })
 
-const composeCountByDate = (data) => {
+const composeCountByDate = (data, dates) => {
     const countsByDate = {};
+    const dateRange = new Set();
+    for (let date = dayjs(dates.start); date < dayjs(dates.end); date = dayjs(date).add(1, 'day')) {
+        dateRange.add(dayjs(date).format('M/D/YY'));
+    }
     data.forEach((place) => {
         Object.entries(place).forEach(([key, value]) => {
-            // we have a date
-            if (!isNaN(Date.parse(key))) {
+            // we have a date and its within the filter
+            if (!isNaN(Date.parse(key)) && dateRange.has(key)) {
                 // add to the number or initialize it
                 if (countsByDate[key]) {
                     countsByDate[key] += Number(value);
@@ -124,8 +134,9 @@ export const casesAndRecoveredValue = selector({
     key: 'casesPerDay',
     get: ({ get }) => {
         const { filteredCases, filteredRecovered } = get(filteredStates);
-        const casesByDate = composeCountByDate(filteredCases);
-        const recoveredByDate = composeCountByDate(filteredRecovered);
+        const dates = get(dateState);
+        const casesByDate = composeCountByDate(filteredCases, dates);
+        const recoveredByDate = composeCountByDate(filteredRecovered, dates);
         return Object.entries(casesByDate).map(([key, value]) => {
             return {
                 date: key,
@@ -140,7 +151,8 @@ export const deathsValue = selector({
     key: 'deathsPerDay',
     get: ({ get }) => {
         const { filteredDeaths } = get(filteredStates);
-        const deathsByDate = composeCountByDate(filteredDeaths);
+        const dates = get(dateState);
+        const deathsByDate = composeCountByDate(filteredDeaths, dates);
         return Object.entries(deathsByDate).map(([key, value]) => {
             return {
                 date: key,
