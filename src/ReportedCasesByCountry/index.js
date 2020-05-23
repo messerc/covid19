@@ -1,7 +1,7 @@
 import React from 'react';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
-import { Cell, PieChart, Pie, Tooltip } from 'recharts';
+import { Cell, PieChart, Pie, Tooltip, ResponsiveContainer } from 'recharts';
 import { useRecoilValue } from 'recoil';
 import { dateState, topCasesByCountry } from '../reducer';
 
@@ -71,12 +71,14 @@ const ReportedCasesByCountry = () => {
                     {data.map(renderCountry)}
                 </List>
                 <div>
-                    <PieChart width={400} height={200}>
-                        <Pie data={data} dataKey="value" nameKey="label">
-                            {data.map((_, i) => <Cell key={COLORS[i]} fill={COLORS[i]} /> )}
-                        </Pie>
-                        <Tooltip content={renderTooltip} />
-                    </PieChart>
+                    <ResponsiveContainer width="90%" height={200}>
+                        <PieChart>
+                            <Pie data={data} dataKey="value" nameKey="label">
+                                {data.map((_, i) => <Cell key={COLORS[i]} fill={COLORS[i]} /> )}
+                            </Pie>
+                            <Tooltip content={renderTooltip} />
+                        </PieChart>
+                    </ResponsiveContainer>
                 </div>
             </DataContainer>
         </Container>

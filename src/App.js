@@ -49,7 +49,7 @@ function App() {
 
   return (
     <div>
-      <h1>COVID-19</h1>
+      <h1>State of COVID-19</h1>
       {loading && <div>Loading...</div>}
       {!loading && (
         <Fragment>

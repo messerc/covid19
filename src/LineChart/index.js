@@ -39,7 +39,7 @@ const _LineChart = ({ title, data, fields = [] }) => {
     return (
         <div>
             <h5 style={{ marginTop: 0, marginBottom: '4rem' }}>{title}</h5>
-            <ResponsiveContainer minWidth={200} minHeight={250}>
+            <ResponsiveContainer width="95%" height={250}>
                 <LineChart data={data}>
                     <CartesianGrid 
                         vertical={false}
@@ -55,11 +55,14 @@ const _LineChart = ({ title, data, fields = [] }) => {
                     <YAxis
                         axisLine={false}
                         tickLine={false}
+                        width={70}
                         tick={{ fontSize: '12px' }}
                         tickFormatter={count => count.toLocaleString()}
                     />
-                    <Tooltip position={{ x: 60, y: -20 }} content={renderTooltip} />
-                    <Legend verticalAlign="top" />
+                    <Tooltip position={{ x: 80, y: -20 }} content={renderTooltip} />
+                    {fields.length > 1 && (
+                        <Legend verticalAlign="bottom" />
+                    )}
                     {fields.map(({ name, color }) => (
                         <Line strokeWidth={3} dot={false} key={name} dataKey={name} type="monotone" stroke={color} />
                     ))}
