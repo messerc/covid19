@@ -12,7 +12,7 @@ const DeathsPerDayContainer = () => {
             fields={[
                 {
                   name: 'deaths',
-                  color: 'red',
+                  color: '#67597A',
                 },
             ]}
         />

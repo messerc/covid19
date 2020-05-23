@@ -16,10 +16,8 @@ function App() {
 
   const [loading, setLoading] = useState(false);
   const [cases, setCaseData] = useRecoilState(caseState);
-  // eslint-disable-next-line no-unused-vars
-  const [deaths, setDeathsData] = useRecoilState(deathState);
-  // eslint-disable-next-line no-unused-vars
-  const [recovered, setRecoveredData] = useRecoilState(recoveredState);
+  const setDeaths = useRecoilState(deathState)[1];
+  const setRecovered = useRecoilState(recoveredState)[1];
 
   const fetchAndParse = (url) => {
     return new Promise((resolve, reject) => {
@@ -41,8 +39,8 @@ function App() {
         await fetchAndParse(recoveredURL),
       ];
       setCaseData(casesData.data);
-      setDeathsData(deathsData.data);
-      setRecoveredData(recoveredData.data); 
+      setDeaths(deathsData.data);
+      setRecovered(recoveredData.data); 
     }
     fetchAll().then(() => {
       setLoading(false)
@@ -52,14 +50,14 @@ function App() {
 
   return (
     <div>
-      <h1>Covid 19 site</h1>
+      <h1>COVID-19</h1>
       {loading && <div>Loading...</div>}
       {!loading && (
         <Fragment>
           <FilterBar cases={cases} />
-          <ReportedCasesByCountry />
           <CasesPerDayContainer />
           <DeathsPerDayContainer />
+          <ReportedCasesByCountry />
         </Fragment>
       )}
     </div>

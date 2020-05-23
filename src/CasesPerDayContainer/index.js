@@ -12,11 +12,11 @@ const CasesPerDayContainer = () => {
             fields={[
               {
                 name: 'reported',
-                color: 'red',
+                color: '#67597A',
               },
               {
                 name: 'recovered',
-                color: 'green',
+                color: '#85BAA1',
               },
             ]}
         />

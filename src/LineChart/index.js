@@ -38,7 +38,7 @@ const renderTooltip = props => {
 const _LineChart = ({ title, data, fields = [] }) => {
     return (
         <div>
-            <h3 style={{ marginBottom: '4rem' }}>{title}</h3>
+            <h4 style={{ marginBottom: '4rem' }}>{title}</h4>
             <ResponsiveContainer minWidth={200} minHeight={250}>
                 <LineChart data={data}>
                     <CartesianGrid 
@@ -61,7 +61,7 @@ const _LineChart = ({ title, data, fields = [] }) => {
                     <Tooltip position={{ x: 60, y: -20 }} content={renderTooltip} />
                     <Legend verticalAlign="top" />
                     {fields.map(({ name, color }) => (
-                        <Line dot={false} key={name} dataKey={name} type="monotone" stroke={color} />
+                        <Line strokeWidth={3} dot={false} key={name} dataKey={name} type="monotone" stroke={color} />
                     ))}
                 </LineChart>
             </ResponsiveContainer>
