@@ -1,10 +1,5 @@
 import dayjs from 'dayjs';
-import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
-import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import { atom, selector } from 'recoil';
-
-dayjs.extend(isSameOrAfter);
-dayjs.extend(isSameOrBefore)
 
 // data sets
 export const caseState = atom({
@@ -23,7 +18,6 @@ export const recoveredState = atom({
 });
 
 // filters
-
 export const dateState = atom({
     key: 'date',
     default: {

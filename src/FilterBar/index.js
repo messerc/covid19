@@ -49,6 +49,8 @@ const Button = styled.button`
     margin: 0 1rem 1rem auto;
 `;
 
+const datePickerFormat = 'YYYY-MM-DD';
+
 const FilterBar = ({ cases }) => {
     const [{ min, max }, setMinMax] = useState({ min: '', max: '' })
     const [dateRange, setDateRange] = useRecoilState(dateState);
@@ -58,13 +60,10 @@ const FilterBar = ({ cases }) => {
     useEffect(() => {
         const allDates = Object.keys(cases[0])
             .filter(key => !isNaN(Date.parse(key)));
-        const _min = dayjs(allDates[0]).format('YYYY-MM-DD');
-        const _max = dayjs(allDates[allDates.length - 1]).format('YYYY-MM-DD');
+        const _min = dayjs(allDates[0]).format(datePickerFormat);
+        const _max = dayjs(allDates[allDates.length - 1]).format(datePickerFormat);
         setMinMax({ min: _min, max: _max });
-        setDateRange({
-            start: _min,
-            end: _max,
-        });
+        setDateRange({ start: _min, end: _max });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -128,9 +127,22 @@ const FilterBar = ({ cases }) => {
             </GeoFilterContainer>
             <DateContainer>
                 <h6>Dates</h6>
-                <input style={{ marginLeft: 0 }} min={min} max={max} type="date" value={dateRange.start} onChange={updateStartDate}/>
+                <input
+                    style={{ marginLeft: 0 }}
+                    min={min}
+                    max={dayjs(dateRange.end).subtract(1, 'day').format(datePickerFormat)}
+                    type="date"
+                    value={dateRange.start}
+                    onChange={updateStartDate}
+                />
                 to 
-                <input min={min} max={max} type="date" value={dateRange.end} onChange={updateEndDate} />
+                <input
+                    min={dayjs(dateRange.start).add(1, 'day').format(datePickerFormat)}
+                    max={max}
+                    type="date"
+                    value={dateRange.end}
+                    onChange={updateEndDate}
+                />
             </DateContainer>
         </div>
     )
