@@ -27,19 +27,19 @@ export const recoveredState = atom({
 export const dateState = atom({
     key: 'date',
     default: {
-        start: null,
-        end: null,
+        start: '',
+        end: '',
     },
 });
 
 export const countryState = atom({
     key: 'country',
-    default: null
+    default: '', 
 })
 
 export const provinceState = atom({
     key: 'province',
-    default: null
+    default: '', 
 });
 
 const filterByCountry = (dataset, country) => dataset.filter(place => place['Country/Region'] === country);

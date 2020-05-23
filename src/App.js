@@ -14,7 +14,7 @@ import {
 
 function App() {
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [cases, setCaseData] = useRecoilState(caseState);
   const setDeaths = useRecoilState(deathState)[1];
   const setRecovered = useRecoilState(recoveredState)[1];
@@ -31,7 +31,6 @@ function App() {
   }
 
   useEffect(() => {
-    setLoading(true);
     const fetchAll = async () => {
       const [casesData, deathsData, recoveredData] = [
         await fetchAndParse(casesURL),

@@ -27,7 +27,7 @@ const renderTooltip = props => {
             <StyledTooltip>
                 <p>date: {date}</p>
                 {Object.entries(rest).map(([ key, value ]) => (
-                    <p>{key}: <strong>{value.toLocaleString()}</strong></p>
+                    <p key={key}>{key}: <strong>{value.toLocaleString()}</strong></p>
                 ))}
             </StyledTooltip>
         )

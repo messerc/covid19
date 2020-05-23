@@ -8,6 +8,30 @@ import {
     provinceState,
 } from '../reducer';
 
+const DateContainer = styled.div`
+    > h6 {
+        margin-top: 1rem;
+    }
+    > input {
+        font-size: 0.8em;
+        margin: 0 1rem;
+
+        // default date picker is not good
+        &:before {
+            position: absolute;
+            top: 3px; left: 3px;
+            content: attr(data-date);
+            display: inline-block;
+            color: black;
+        }
+        
+        &::-webkit-inner-spin-button, &::-webkit-clear-button {
+            display: none;
+        }
+        
+    }
+`;
+
 const GeoFilterContainer = styled.div`
     display: flex;
     position: relative;
@@ -15,6 +39,9 @@ const GeoFilterContainer = styled.div`
     > div {
         margin-right: 3rem;
         min-width: 150px;
+        > select {
+            font-size: 0.8em;
+        }
     }
 `;
 
@@ -23,23 +50,21 @@ const Button = styled.button`
 `;
 
 const FilterBar = ({ cases }) => {
-    const [{ min, max }, setMinMax] = useState({ min: null, max: null })
+    const [{ min, max }, setMinMax] = useState({ min: '', max: '' })
     const [dateRange, setDateRange] = useRecoilState(dateState);
     const [country, setCountry] = useRecoilState(countryState);
     const [province, setProvince] = useRecoilState(provinceState);
 
     useEffect(() => {
-        if (Boolean(cases.length)) {
-            const allDates = Object.keys(cases[0])
-                .filter(key => !isNaN(Date.parse(key)));
-            const _min = dayjs(allDates[0]).format('YYYY-MM-DD');
-            const _max = dayjs(allDates[allDates.length - 1]).format('YYYY-MM-DD');
-            setMinMax({ min: _min, max: _max });
-            setDateRange({
-                start: _min,
-                end: _max,
-            });
-        }
+        const allDates = Object.keys(cases[0])
+            .filter(key => !isNaN(Date.parse(key)));
+        const _min = dayjs(allDates[0]).format('YYYY-MM-DD');
+        const _max = dayjs(allDates[allDates.length - 1]).format('YYYY-MM-DD');
+        setMinMax({ min: _min, max: _max });
+        setDateRange({
+            start: _min,
+            end: _max,
+        });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -68,10 +93,10 @@ const FilterBar = ({ cases }) => {
     const updateEndDate = e => setDateRange({ start: dateRange.start, end: e.target.value });
 
     return (
-        <div style={{ borderBottom: '1px solid gray', marginBottom: '1rem', }}>
+        <div style={{ borderBottom: '1px solid gray', marginBottom: '1rem', paddingBottom: '1rem' }}>
             <GeoFilterContainer>
                 <div>
-                    <h6>country</h6>
+                    <h6>Country</h6>
                     <select value={country} onChange={updateCountry} name="country/region">
                         <option value={''} key="country-all">
                             All
@@ -85,7 +110,7 @@ const FilterBar = ({ cases }) => {
                 </div>
                 {country && Boolean(provinces.length) && (
                     <div>
-                        <h6>province</h6>
+                        <h6>Province</h6>
                         <select value={province} onChange={updateProvince} name="province/state">
                             <option value={''} key="province-all">
                                 All
@@ -101,12 +126,12 @@ const FilterBar = ({ cases }) => {
                 )}
                 <Button onClick={clearFilters}>Clear filters</Button>
             </GeoFilterContainer>
-            <div style={{ marginLeft: 'auto' }}>
-                <h6 style={{ marginTop: '1rem' }}>dates</h6>
-                <input style={{ marginRight: '1rem' }} min={min} max={max} type="date" value={dateRange.start} onChange={updateStartDate}/>
+            <DateContainer>
+                <h6>Dates</h6>
+                <input style={{ marginLeft: 0 }} min={min} max={max} type="date" value={dateRange.start} onChange={updateStartDate}/>
                 to 
-                <input style={{ marginLeft: '1rem' }} min={min} max={max} type="date" value={dateRange.end} onChange={updateEndDate} />
-            </div>
+                <input min={min} max={max} type="date" value={dateRange.end} onChange={updateEndDate} />
+            </DateContainer>
         </div>
     )
 }

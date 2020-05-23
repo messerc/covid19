@@ -54,7 +54,7 @@ const COLORS = ['#67597A', '#544E61', '#6E8894', '#85BAA1', '#95C8B1'];
 
 const renderCountry = (country, i) => {
     return (
-        <p style={{ marginBottom: '0.6rem' }}>
+        <p key={country.label} style={{ marginBottom: '0.6rem' }}>
             {i+1}. {country.label}: <span style={{ fontWeight: 600, color: COLORS[i] }}>{country.value.toLocaleString()}</span>
         </p>
     );
@@ -73,7 +73,7 @@ const ReportedCasesByCountry = () => {
                 <div>
                     <PieChart width={400} height={200}>
                         <Pie data={data} dataKey="value" nameKey="label">
-                            {data.map((_, i) => <Cell fill={COLORS[i]} /> )}
+                            {data.map((_, i) => <Cell key={COLORS[i]} fill={COLORS[i]} /> )}
                         </Pie>
                         <Tooltip content={renderTooltip} />
                     </PieChart>
