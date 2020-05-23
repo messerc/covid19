@@ -1,16 +1,52 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# State of COVID-19
 
-## Available Scripts
+![Site](https://i.imgur.com/FSHxqDm.gif)
 
-In the project directory, you can run:
+## Tech used
+- `react` / bootstrapped with [`create-react-app`](https://github.com/facebook/create-react-app).
+- [`recharts`](https://recharts.org/) for charting
+- [`recoil`](https://recoiljs.org/) for state management
+- [`styled-components`](https://styled-components.com/) for styling
 
-### `yarn start`
+## Overview / Tech Explanation
+
+I haven't worked with data visualizations too much in a couple of years, so it was refreshing and fun to have a focused challenge around that.
+My approach was generally to keep the exercise timeboxed, but also try some new stuff out. That's why I chose a mix of tech I'm comfortable with (react, recharts) along with 
+some brand new experimental stuff (recoil).
+
+Recharts is a data viz library built on top of d3 and exposes a series of composable React components. I've worked with a handful of libs in the past and found Recharts to be the easiest / 
+best performing charts to work with (for React specifically). I could've opted for d3 but for just basic line and pie charts, it made sense for this exercise.
+
+Recoil is a brand new "experimental" state management library from Facebook. I'm not the type of person to use additional tech before it's needed, but in this case, I was interested in 
+trying Recoil and this was a good use case for it. It's a very lightweight solution to sharing state across the app and performing any series of transformations (deriving) from that state. The reason this state management solution was built was essentially for internal dashboard-type applications, so it felt natural.
+However, I did end up paying a cost in using such an experimental library. There will be a few errors popping up into the console on initial load, and 
+that issue is being [tracked here](https://github.com/facebookexperimental/Recoil/issues/12). It doesn't seem to cause any noticeable harm to the app for now. I also wanted to deploy this application, but I ran into [deployment issues](https://github.com/facebookexperimental/Recoil/issues/122), as did most everyone else. No regrets, it was still fun to try out.
+
+I picked styled components because it's just what I'm familiar with at work, styling was a lower priority for this exercise.
+
+## Thoughts / Approach
+
+As the prompt called for, I wanted to keep the application simple. No outside components other than the charts themselves.
+
+In terms of the data, I was going to have the CSVs local but decided it's more interesting if we're referring to the live gists, which will update each day. I spent some time just getting a sense of the data and
+then dove in. In hindsight, I might've spent a little more time thinking about how I could've molded the data. There is some slightly funky code in `reducer.js` - but I think it landed in a reasonable place given the time. A lot of this time was spent learning how to use `recoil` and trying to find reasonable levels of abstraction.
+
+In terms of improvements I wanted to do but felt I had put in enough time: 
+- I'd add more high-level information / aggregate-type info
+- persist filter state in the URL
+- test coverage for `reducer.js` 
+
+I noticed there was a "Bonus" section but I hope this is enough to start, happy to add onto it if we think that's helpful. 
+
+I hope you enjoy playing around in the application, thank you!
+
+-------------------------------
+
+## Running this project
+
+Clone down the repo, `yarn` / `npm install` -> `npm start` / `yarn start` -> open [http://localhost:3000](http://localhost:3000)
 
 Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
 
 ### `yarn test`
 
@@ -26,43 +62,3 @@ The build is minified and the filenames include the hashes.<br />
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
