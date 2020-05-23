@@ -1,8 +1,22 @@
 import React from 'react';
+import dayjs from 'dayjs';
 import styled from 'styled-components';
-import { PieChart, Pie, Tooltip } from 'recharts';
+import { Cell, PieChart, Pie, Tooltip } from 'recharts';
 import { useRecoilValue } from 'recoil';
-import { topCasesByCountry } from '../reducer';
+import { dateState, topCasesByCountry } from '../reducer';
+
+const Container = styled.div`
+    background-color: white;
+    padding: 2rem;
+    border-radius: 5px;
+    box-shadow: 1px 3px 3px solid rgb(225, 225, 225);
+`;
+
+const DataContainer = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+`;
 
 const StyledTooltip = styled.div`
     background-color: white;
@@ -17,6 +31,12 @@ const StyledTooltip = styled.div`
     }
 `;
 
+const List = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin: auto 0 auto 2rem;
+`;
+
 const renderTooltip = props => {
     if (props.active) {
         const { payload: { label, value } } = props.payload[0]
@@ -29,13 +49,37 @@ const renderTooltip = props => {
     }
 }
 
+// weirdness of recharts
+const COLORS = ['#67597A', '#544E61', '#6E8894', '#85BAA1', '#95C8B1'];
+
+const renderCountry = (country, i) => {
+    return (
+        <p style={{ marginBottom: '0.6rem' }}>
+            {i+1}. {country.label}: <span style={{ fontWeight: 600, color: COLORS[i] }}>{country.value.toLocaleString()}</span>
+        </p>
+    );
+}
+
 const ReportedCasesByCountry = () => {
     const data = useRecoilValue(topCasesByCountry);
+    const date = useRecoilValue(dateState);
     return (
-        <PieChart width={700} height={250}>
-            <Pie data={data} dataKey="value" nameKey="label" />
-            <Tooltip content={renderTooltip} />
-        </PieChart>
+        <Container>
+            <h5 style={{ marginTop: 0 }}>Top cases by country: {dayjs(date.end).format('MMM DD, YYYY')}</h5>
+            <DataContainer>
+                <List>
+                    {data.map(renderCountry)}
+                </List>
+                <div>
+                    <PieChart width={400} height={200}>
+                        <Pie data={data} dataKey="value" nameKey="label">
+                            {data.map((_, i) => <Cell fill={COLORS[i]} /> )}
+                        </Pie>
+                        <Tooltip content={renderTooltip} />
+                    </PieChart>
+                </div>
+            </DataContainer>
+        </Container>
     )
 }
 

@@ -8,7 +8,7 @@ import {
     provinceState,
 } from '../reducer';
 
-const FilterContainer = styled.div`
+const GeoFilterContainer = styled.div`
     display: flex;
     position: relative;
     align-items: flex-end;
@@ -19,9 +19,7 @@ const FilterContainer = styled.div`
 `;
 
 const Button = styled.button`
-    position: absolute;
-    right: 0;
-    top: -1rem;
+    margin: 0 1rem 1rem auto;
 `;
 
 const FilterBar = ({ cases }) => {
@@ -70,44 +68,46 @@ const FilterBar = ({ cases }) => {
     const updateEndDate = e => setDateRange({ start: dateRange.start, end: e.target.value });
 
     return (
-        <FilterContainer>
-            <Button onClick={clearFilters}>Clear filters</Button>
-            <div>
-                <h6>country</h6>
-                <select value={country} onChange={updateCountry} name="country/region">
-                    <option value={''} key="country-all">
-                        All
-                    </option>
-                    {countries.map((country, i) => (
-                        <option value={country} key={country + i}>
-                            {country}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            {country && Boolean(provinces.length) && (
+        <div style={{ borderBottom: '1px solid gray', marginBottom: '1rem', }}>
+            <GeoFilterContainer>
                 <div>
-                    <h6>province</h6>
-                    <select value={province} onChange={updateProvince} name="province/state">
-                        <option value={''} key="province-all">
+                    <h6>country</h6>
+                    <select value={country} onChange={updateCountry} name="country/region">
+                        <option value={''} key="country-all">
                             All
                         </option>
-                        {provinces
-                            .map(province => (
-                                <option value={province} key={province}>
-                                    {province}
-                                </option>
-                            ))}
+                        {countries.map((country, i) => (
+                            <option value={country} key={country + i}>
+                                {country}
+                            </option>
+                        ))}
                     </select>
                 </div>
-            )}
+                {country && Boolean(provinces.length) && (
+                    <div>
+                        <h6>province</h6>
+                        <select value={province} onChange={updateProvince} name="province/state">
+                            <option value={''} key="province-all">
+                                All
+                            </option>
+                            {provinces
+                                .map(province => (
+                                    <option value={province} key={province}>
+                                        {province}
+                                    </option>
+                                ))}
+                        </select>
+                    </div>
+                )}
+                <Button onClick={clearFilters}>Clear filters</Button>
+            </GeoFilterContainer>
             <div style={{ marginLeft: 'auto' }}>
-                <h6>dates</h6>
+                <h6 style={{ marginTop: '1rem' }}>dates</h6>
                 <input style={{ marginRight: '1rem' }} min={min} max={max} type="date" value={dateRange.start} onChange={updateStartDate}/>
                 to 
                 <input style={{ marginLeft: '1rem' }} min={min} max={max} type="date" value={dateRange.end} onChange={updateEndDate} />
             </div>
-        </FilterContainer>
+        </div>
     )
 }
 

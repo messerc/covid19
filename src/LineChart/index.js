@@ -38,7 +38,7 @@ const renderTooltip = props => {
 const _LineChart = ({ title, data, fields = [] }) => {
     return (
         <div>
-            <h4 style={{ marginBottom: '4rem' }}>{title}</h4>
+            <h5 style={{ marginTop: 0, marginBottom: '4rem' }}>{title}</h5>
             <ResponsiveContainer minWidth={200} minHeight={250}>
                 <LineChart data={data}>
                     <CartesianGrid 

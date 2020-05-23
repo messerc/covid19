@@ -139,7 +139,7 @@ const composeCountByCountry = (data, date) => {
         if (countsByCountry[country]) {
             // if the country exists already, add from supplied date
             countsByCountry[country] += Number(place[dayjs(date).format('M/D/YY')]);
-        } else {
+        } else if (country) {
             countsByCountry[country] = Number(place[dayjs(date).format('M/D/YY')]);
         }
     });
@@ -156,6 +156,6 @@ export const topCasesByCountry = selector({
         return Object.entries(casesByCountry)
             .sort((a, b) => a[1] < b[1] ? 1 : -1)
             .map(([ key, value ]) => ({ label: key, value }))
-            .slice(0, 6);
+            .slice(0, 5);
     }
 });

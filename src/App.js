@@ -54,10 +54,10 @@ function App() {
       {loading && <div>Loading...</div>}
       {!loading && (
         <Fragment>
+          <ReportedCasesByCountry />
           <FilterBar cases={cases} />
           <CasesPerDayContainer />
           <DeathsPerDayContainer />
-          <ReportedCasesByCountry />
         </Fragment>
       )}
     </div>
