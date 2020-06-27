@@ -2,6 +2,8 @@
 
 ![Site](https://i.imgur.com/FSHxqDm.gif)
 
+Mainly used this as a way to test [`recoil`](https://recoiljs.org/) which was fun.
+
 ## Tech used
 - `react` / bootstrapped with [`create-react-app`](https://github.com/facebook/create-react-app).
 - [`recharts`](https://recharts.org/) for charting
